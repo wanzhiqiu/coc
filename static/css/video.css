@@ -1,0 +1,4 @@
+.list-group-horizontal .list-group-item{
+    display: inline-block;
+    margin:10px;
+}

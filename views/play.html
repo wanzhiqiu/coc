@@ -1,0 +1,93 @@
+{% extends "base.html" %} {% block main %}
+<script>
+    function addMessage(list, msg) {
+    list.push(msg);
+    $('#message-list').parent().animate({
+        scrollTop: $('#message-list').height()
+    }, 1000);
+}
+    $(function(){
+        var vmMessageList = new Vue({
+        el: '#message-list',
+        data: {
+            messages: []
+        }
+    });
+
+    var ws = new WebSocket('ws://localhost:3000/coc');
+    ws.onmessage = function(event) {
+        var data = event.data;
+        console.log(data);
+        var msg = JSON.parse(data);
+        if (msg.type === 'chat') {
+            addMessage(vmMessageList.messages, msg);
+        }
+    };
+    
+    ws.onerror = function (code, msg) {
+        console.log('[ERROR] ' + code + ': ' + msg);
+    };
+    $('#form-chat').submit(function (e) {
+        e.preventDefault();
+        var input = $(this).find('input[type=text]');
+        var text = input.val().trim();
+        console.log('[chat] ' + text);
+        if (text) {
+            input.val('');
+            ws.send(text);
+        }
+    });
+});
+</script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-hd-video"></span>text1</h3>
+                </div>
+                <div class="panel-body">
+                    <video width="100%" controls="controls">
+                        <source id ="video" src="{{address}}">
+                    </video>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"></span>评论</h3>
+                </div>
+                <div class="panel-body">
+                    <div style="height:400px; overflow-x:hidden; overflow-y:scroll;">
+                        <div id="message-list">
+                            <div style="margin-bottom:25px;" v-for="msg in messages">
+                                <div v-if="msg.type === 'chat'">
+                                    <div class="media">
+                                        <div class="media-left">
+                                            <img class="media-object" style="width:48px; height:48px;" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading" v-text="msg.user.name"></h4>
+                                            <span v-text="msg.data"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <form id="form-chat" action="#0">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="来一发神评">
+                                <span class="input-group-btn"><button class="btn btn-default" type="submit">发送</button></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

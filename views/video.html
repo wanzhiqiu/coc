@@ -1,0 +1,94 @@
+{% extends "base.html" %} {% block main %}
+<script>
+
+    function parseUser(obj) {
+    if (!obj) {
+        return;
+    }
+    console.log('try parse: ' + obj);
+    let s = '';
+    if (typeof obj === 'string') {
+        s = obj;
+    } else if (obj.headers) {
+        let cookies = new Cookies(obj, null);
+        s = cookies.get('name');
+    }
+    if (s) {
+        try {
+            let user = JSON.parse(Buffer.from(s, 'base64').toString());
+            console.log(`User: ${user.name}, ID: ${user.id}`);
+            return user;
+        } catch (e) {
+            // ignore
+        }
+    }
+}
+    console.log(document.cookie);
+    let user=parseUser(document.cookie);
+    console.log(user);
+    $(function(){
+        var user=new vue({
+            el:'#user',
+            data:{
+                user:user
+            }
+        });
+    });
+
+   $(function(){
+    var data=$('#data');
+    var user=$('#user');
+    data.click(function(){
+        location.href='https://www.cocservice.top/update/';
+    });
+    user.click(function(){
+        location.href='/user';
+    });
+});
+    
+
+</script>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8" id ="video-list">
+               
+                <div>
+                    <h3>常规部落对战三星视频</h3>
+                    <ul class="list-group-horizontal">
+                        <a href="/video/0"class="list-group-item"><img  src="\static\images\0.png"></a>
+                        <a href="/video/1"class="list-group-item"><img  src="\static\images\1.png"></a>
+                        <a href="/video/2"class="list-group-item"><img  src="\static\images\2.png"></a>
+                        <a href="/video/3"class="list-group-item"><img  src="\static\images\3.png"></a>
+                        <a href="/video/4"class="list-group-item"><img  src="\static\images\4.png"></a>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>部落对战联赛精彩三星视频</h3>
+                    <ul class="list-group-horizontal">
+                        <a href="/video/5"class="list-group-item"><img  src="\static\images\5.png"></a>
+                        <a href="/video/6"class="list-group-item"><img  src="\static\images\6.png"></a>
+                        <a href="/video/7"class="list-group-item"><img  src="\static\images\7.png"></a>
+                        <a href="/video/8"class="list-group-item"><img  src="\static\images\8.png"></a>
+                        <a href="/video/9"class="list-group-item"><img  src="\static\images\9.png"></a>
+                    </ul>
+                </div>
+    
+            </div>
+            <div class="col-md-3">
+                <div>
+                    <img id='10' src="\static\images\13.png">
+                    <h3>升级数据</h3>
+                </div>
+                
+                <div>
+                    <p>在这里你可以看到各个兵种、法术、建筑的升级数据，游戏规划由自己掌握   友谊链接</p>
+                    <button id="data" class="btn btn-primary">查看详情</button>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button id="user" class="btn btn-primary">{{user}}</button>
+            </div>
+        </div>
+    
+{% endblock %}
